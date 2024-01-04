@@ -1,5 +1,2 @@
-# data-table
-# infinite reloading
-# intersection observer
-# sorting
-# big-data
+# data-table, infinite reloading, intersection observer, sorting, big-data
+
