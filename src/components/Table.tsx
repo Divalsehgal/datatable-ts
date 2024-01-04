@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface TableColumn {
@@ -23,10 +23,12 @@ const Table: React.FC<TableProps> = ({ columns, data, itemsPerPage }) => {
 
   const [sortedColumn, setSortedColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [totalItems, setTotalItemslength] = useState(0);
+  const [totalItems, setTotalItemsLength] = useState(0);
+  
+  const lastElementRef = useRef<HTMLTableRowElement | null>(null);
 
   useEffect(() => {
-    setTotalItemslength(data?.length);
+    setTotalItemsLength(data?.length);
     setDisplayData(data.slice(0, itemsPerPage));
   }, [data, itemsPerPage]);
 
@@ -58,16 +60,31 @@ const Table: React.FC<TableProps> = ({ columns, data, itemsPerPage }) => {
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.offsetHeight
+        lastElementRef.current &&
+        lastElementRef.current.getBoundingClientRect().bottom <=
+          window.innerHeight
       ) {
         loadMoreData();
       }
     };
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          loadMoreData();
+        }
+      },
+      { root: null, rootMargin: "0px", threshold: 0.1 }
+    );
+
+    if (lastElementRef.current) {
+      observer.observe(lastElementRef.current);
+    }
+
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
     };
   }, [isFetching, totalItems]);
 
@@ -101,11 +118,14 @@ const Table: React.FC<TableProps> = ({ columns, data, itemsPerPage }) => {
         </tr>
       </thead>
       <tbody>
-        {sortedData.map((row,index) => {
+        {sortedData.map((row, index) => {
           const rowId = uuidv4();
           return (
-            <tr key={rowId}>
-              <td>{index+1}</td>
+            <tr
+              key={rowId}
+              ref={index === sortedData.length - 1 ? lastElementRef : null}
+            >
+              <td>{index + 1}</td>
               {columns.map((column) => (
                 <td
                   key={`${rowId}-${column.key}`}
