@@ -1,3 +1,5 @@
-# datatable-ts
-# datatable-ts
 # data-table
+# infinite reloading
+# intersection observer
+# sorting
+# big-data
