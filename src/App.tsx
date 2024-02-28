@@ -8,7 +8,7 @@ interface TableColumn {
 }
 
 function App() {
-  const [columns, _] = useState<TableColumn[]>([
+  const columns:TableColumn[]=[
     { key: "ConsumedQuantity", label: "Consumed Quantity" },
     { key: "Cost", label: "Cost" },
     { key: "Date", label: "Date" },
@@ -19,7 +19,7 @@ function App() {
     { key: "UnitOfMeasure", label: "Unit of Measure" },
     { key: "Location", label: "Location" },
     { key: "ServiceName", label: "Service Name" },
-  ]);
+  ];
   const [selectedValue, setSelectedValue] = useState<string>("");
 
   const [resourceType, setResourceType] = useState([]);
@@ -36,7 +36,7 @@ function App() {
         const resourcesData = await resourcesResponse.json();
         const rawData = await rawDataResponse.json();
         const resourceTypes = resourcesData.map(
-          (resource: any, index: Number) => ({
+          (resource: any, index: number) => ({
             key: index,
             label: resource,
           })
@@ -75,9 +75,7 @@ function App() {
     setSelectedValue(selectedValue);
   };
 
-  console.log(selectedValue);
   return (
-    <>
       <div className="container mx-auto">
         <h1 className="text-3xl font-bold mb-4">Resources Visualization</h1>
         Filter By resource:{" "}
@@ -92,7 +90,6 @@ function App() {
           )}
         </div>
       </div>
-    </>
   );
 }
 
